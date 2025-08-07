@@ -1,3 +1,7 @@
+from nlp_utils import get_cover_letter_feedback  # Import the function from nlp_utils.py
+
+from job_matcher import match_resume_to_job
+
 # backend/app.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -81,7 +85,22 @@ def analyze_cover_letter():
     feedback = get_cover_letter_feedback(cover_text)
     return jsonify({'feedback': feedback})
 
-# You’ll define this function below 👇
+
+@app.route('/match_job_role', methods=['POST'])
+def match_job_role():
+    data = request.get_json()
+    resume_text = data.get('resume', '')
+    job_title = data.get('job_title', '')
+
+    if not resume_text or not job_title:
+        return jsonify({"error": "Both resume and job_title are required"}), 400
+
+    result = match_resume_to_job(resume_text, job_title)
+    if result:
+        return jsonify({"success": True, "match": result})
+    else:
+        return jsonify({"success": False, "error": "Job title not found in database"}), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
