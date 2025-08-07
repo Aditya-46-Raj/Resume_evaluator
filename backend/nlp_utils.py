@@ -6,7 +6,7 @@ def get_cover_letter_feedback(text):
 
     # 1. Grammar & Spelling Check
     matches = tool.check(text)
-    grammar_issues = [tool.get_message(match) for match in matches]
+    grammar_issues = [match.message for match in matches]  # Fix: Access message directly
 
     # 2. Readability Score
     readability = textstat.flesch_reading_ease(text)
@@ -18,7 +18,7 @@ def get_cover_letter_feedback(text):
 
     # 4. Suggestions
     feedback = {
-        "grammar_issues": grammar_issues[:5],  # limit to top 5
+        "grammar_issues": grammar_issues[:5],  # Limit to top 5 grammar issues
         "readability_score": readability,
         "average_sentence_length": avg_sentence_length,
         "word_count": word_count,

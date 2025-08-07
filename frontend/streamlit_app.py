@@ -82,6 +82,31 @@ if page == "Resume Evaluator":
                 else:
                     st.error("ATS scoring failed.")
 
+# -------------------- Job Role Matcher --------------------
+st.subheader("🧠 Match Resume to Job Role")
+
+job_title = st.text_input("Enter Job Title (e.g., Data Analyst, ML Engineer)")
+
+if st.button("Match with Job Role"):
+    if text and job_title:
+        with st.spinner("Matching..."):
+            response = requests.post(
+                "http://localhost:5000/match_job_role",
+                json={"resume": text, "job_title": job_title}
+            )
+
+            if response.status_code == 200:
+                result = response.json()["match"]
+                st.metric("Semantic Similarity", f"{result['semantic_score']}%")
+                st.write("🔍 Missing Keywords:", result["missing_keywords"])
+                st.info("Job Description Used:")
+                st.write(result["job_description"])
+            else:
+                st.error("Could not find matching job title.")
+    else:
+        st.warning("Please upload resume and enter a job title.")
+
+
 # ------------------------- Cover Letter Checker -------------------------
 elif page == "Cover Letter Checker":
     st.title("📝 Cover Letter Checker")
